@@ -1,23 +1,17 @@
-import { getDatabase , ref , set } from "firebase/database";
-import { app } from "./firebase"
-import './App.css';
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { app } from "./firebase";
+import "./App.css";
+import SignIn from "./Components/SignIn";
+import SignUp from "./Components/SignUp";
 
-const db = getDatabase(app);
+const auth = getAuth(app);
 
 function App() {
 
-const putDara = () => {
-  set(ref(db, "users/app"), {
-    id: 88753,
-    name: "Hafiz Aliwj",
-    age: 15,
-  })
-};
-
   return (
     <div className="App">
-    <h1>This is a firebase project</h1>
-    <button onClick={putDara}>Set Data</button>
+     <SignUp />
+     <SignIn />
     </div>
   );
 }
