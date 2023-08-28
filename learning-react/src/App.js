@@ -9,7 +9,7 @@ function App() {
 const putDara = () => {
   set(ref(db, "users/app"), {
     id: 88753,
-    name: "Hafiz Ali Awj",
+    name: "Hafiz Aliwj",
     age: 15,
   })
 };
