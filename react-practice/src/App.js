@@ -7,6 +7,9 @@ function App() {
   const [showMore, setShowMore] = useState(false);
   const hasNext = index < sculptureList.length - 1;
   const [count, setCount] = useState(0);
+  const [answer, setAnswer] = useState("");
+  const [error, setError] = useState(null);
+  const [status, setStatus] = useState("typing");
 
   function handleNextClick() {
     if (hasNext) {
@@ -20,16 +23,56 @@ function App() {
     setShowMore(!showMore);
   }
 
-  function updateCount (){
+  function updateCount() {
     setCount(count + 1);
   }
+
+  function handleTextareaChange(e) {
+    setAnswer(e.target.value);
+  }
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    setStatus('submitting');
+    try {
+      await submitForm(answer);
+      setStatus('success');
+    } catch (err) {
+      setStatus('typing');
+      setError(err);
+    }
+  }
+
+  function submitForm(answer) {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        let shouldError = answer.toLowerCase() !== 'islamabad'
+        if (shouldError) {
+          reject(new Error('Good guess but a wrong answer. Try again!'));
+        } else {
+          resolve();
+        }
+      }, 1500);
+    });
+  }
+  
 
   let sculpture = sculptureList[index];
 
   return (
     <div className="App">
-    <p>{count}</p>
-    <Button onClick={updateCount} >Update count </Button>
+      <div>
+        <h1>What is the capital of Pakistan?</h1>
+        <form onSubmit={handleSubmit}>
+          <textarea value={answer} onChange={handleTextareaChange} />
+          <br />
+          <button disabled={answer.length === 0 || status === "submitting"}>Submit</button>
+          {error !== null && 
+          <p className="error">{error.message}</p>}
+        </form>
+      </div>
+      <p>{count}</p>
+      <Button onClick={updateCount}>Update count </Button>
       <Toolbar
         onPlayMovie={() => alert("Playing!")}
         onUploadImage={() => alert("Uploading!")}
@@ -40,16 +83,15 @@ function App() {
           <i>{sculpture.name} </i>
           by {sculpture.artist}
         </h2>
-        <h3>{index + 1} of {sculptureList.length}</h3>
+        <h3>
+          {index + 1} of {sculptureList.length}
+        </h3>
         <button onClick={handleMoreClick}>
-        {showMore ? 'Hide' : 'Show'} details
-      </button>
-      {showMore && <p>{sculpture.description}</p>}
-      <br />
-        <img
-        src={sculpture.url}
-        alt={sculpture.alt}
-      />
+          {showMore ? "Hide" : "Show"} details
+        </button>
+        {showMore && <p>{sculpture.description}</p>}
+        <br />
+        <img src={sculpture.url} alt={sculpture.alt} />
       </div>
     </div>
   );
